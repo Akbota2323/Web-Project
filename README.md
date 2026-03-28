@@ -7,9 +7,9 @@ This project is a web application built with Angular and Django REST Framework.
 
 ## Team Members
 
-* Аблехан Ақтұмар
-* Абылқақова Ақбота
-* Қуат Жібек
+* Ablekhan Aktumar
+* Abylkakova Akbota
+* Kuat Zhibek
 
 ## Technologies
 
