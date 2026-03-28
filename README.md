@@ -5,10 +5,40 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 ## Development server
 
 To start a local development server, run:
+# Web-Project
+# Fullstack Angular + Django Project
 
+## Description
+
+This project is a web application built with Angular and Django REST Framework.
+
+## Team Members
+
+* Ablekhan Aktumar
+* Abylkakova Akbota
+* Kuat Zhibek
+
+## Technologies
+
+* Angular
+* Django REST Framework
+
+## Features
+
+* Authentication
+* CRUD operations
+* API integration
+
+## How to Run
+
+Backend:
+```bash
+python manage.py runserver
+
+
+Frontend:
 ```bash
 ng serve
-```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
@@ -57,3 +87,4 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
