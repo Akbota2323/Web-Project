@@ -1,5 +1,5 @@
 # Web-Dev
-# AlmatyGo
+# AlmatyGo 🍎
 
 AlmatyGo is a web application designed for foreign tourists who want to explore the city of Almaty. The platform helps users discover interesting places such as restaurants, parks, mountains, and cultural attractions.
 
