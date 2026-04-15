@@ -1,0 +1,59 @@
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="brand">
+      <span class="logo">🍎</span>
+      <h1>AlmatyGo</h1>
+      <p>Discover the best of Almaty — restaurants, nature, culture and more.</p>
+    </div>
+    <div class="features">
+      <div class="feature"><span>🏔️</span><span>Explore mountains & parks</span></div>
+      <div class="feature"><span>🍽️</span><span>Find top restaurants</span></div>
+      <div class="feature"><span>🏛️</span><span>Discover cultural gems</span></div>
+      <div class="feature"><span>📅</span><span>Book tours easily</span></div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+      <h2>{{ isRegister ? 'Create account' : 'Welcome back' }}</h2>
+      <p class="subtitle">{{ isRegister ? 'Join AlmatyGo today' : 'Sign in to your account' }}</p>
+
+      @if (isRegister) {
+        <div class="form-group">
+          <label>Email</label>
+          <input [(ngModel)]="email" type="email" placeholder="you@example.com" />
+        </div>
+      }
+
+      <div class="form-group">
+        <label>Username</label>
+        <input [(ngModel)]="username" placeholder="Enter username" />
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input [(ngModel)]="password" type="password" placeholder="Enter password" />
+      </div>
+
+      @if (isRegister) {
+        <div class="form-group">
+          <label>Confirm password</label>
+          <input [(ngModel)]="password2" type="password" placeholder="Repeat password" />
+        </div>
+      }
+
+      @if (errorMessage) {
+        <div class="error-msg">{{ errorMessage }}</div>
+      }
+
+      <button class="btn-submit" (click)="submit()" [disabled]="loading">
+        {{ loading ? 'Please wait...' : (isRegister ? 'Create account' : 'Sign in') }}
+      </button>
+
+      <p class="toggle">
+        {{ isRegister ? 'Already have an account?' : "Don't have an account?" }}
+        <a (click)="toggle()">{{ isRegister ? 'Sign in' : 'Register' }}</a>
+      </p>
+    </div>
+  </div>
+</div>

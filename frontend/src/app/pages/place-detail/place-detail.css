@@ -1,0 +1,10 @@
+.page {
+  padding: 20px;
+}
+
+.detail-image {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}

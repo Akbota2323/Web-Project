@@ -1,0 +1,33 @@
+<div class="page">
+  @if (loading) {
+    <p>Loading...</p>
+  }
+
+  @if (place && !loading) {
+    <img [src]="place.image_url" [alt]="place.name" class="detail-image" />
+    <h1>{{ place.name }}</h1>
+    <p>{{ place.address }}</p>
+    <p>{{ place.description }}</p>
+
+    @if (place.category) {
+      <p>{{ getCategoryEmoji(place.category.name) }} {{ place.category.name }}</p>
+    }
+
+    <p>{{ getStars(place.rating) }} {{ place.rating }}</p>
+    <p>{{ place.price_range }}</p>
+    <p>{{ place.working_hours }}</p>
+
+    @if (place.phone) {
+      <p>{{ place.phone }}</p>
+    }
+
+    <button (click)="bookTour()">Book a tour</button>
+    <button (click)="toggleFavorite()">
+      {{ place.is_favorited ? '❤️ Saved' : '🤍 Save place' }}
+    </button>
+
+    @if (!isLoggedIn) {
+      <p>Please login to use all features.</p>
+    }
+  }
+</div>
