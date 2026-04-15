@@ -34,8 +34,12 @@
     "@angular/ssr": "^21.1.4",
     "express": "^5.1.0",
     "rxjs": "~7.8.0",
+<<<<<<< HEAD
     "tslib": "^2.3.0",
     "zone.js": "^0.16.1"
+=======
+    "tslib": "^2.3.0"
+>>>>>>> 9dfc91e3ec53a7c281213a0cde079d29cac7a931
   },
   "devDependencies": {
     "@angular/build": "^21.1.4",
@@ -47,4 +51,8 @@
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 9dfc91e3ec53a7c281213a0cde079d29cac7a931

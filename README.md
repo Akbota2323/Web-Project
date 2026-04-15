@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Frontend
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
@@ -11,6 +12,23 @@ To start a local development server, run:
 ## Description
 
 This project is a web application built with Angular and Django REST Framework.
+=======
+# Web-Dev
+# AlmatyGo 🍎
+
+AlmatyGo is a web application designed for foreign tourists who want to explore the city of Almaty. The platform helps users discover interesting places such as restaurants, parks, mountains, and cultural attractions.
+
+Users can browse locations, filter them by categories, search for specific places, and view detailed information. In addition, the application allows tourists to book tours easily through a simple interface.
+
+The main goal of this project is to provide a convenient and user-friendly way for visitors to explore Almaty and plan their activities in one place.
+
+## Features
+- Browse places in Almaty
+- Filter by categories (Food, Nature, Culture, Entertainment)
+- Search for locations
+- Like and save favorite places
+- Book tours online
+>>>>>>> 9dfc91e3ec53a7c281213a0cde079d29cac7a931
 
 ## Team Members
 
@@ -32,6 +50,7 @@ This project is a web application built with Angular and Django REST Framework.
 ## How to Run
 
 Backend:
+<<<<<<< HEAD
 ```bash
 python manage.py runserver
 
@@ -88,3 +107,15 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 
+=======
+
+```bash
+python manage.py runserver
+```
+
+Frontend:
+
+```bash
+ng serve
+```
+>>>>>>> 9dfc91e3ec53a7c281213a0cde079d29cac7a931
