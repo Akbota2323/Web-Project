@@ -1,0 +1,20 @@
+<div class="page">
+  <h2>My Bookings</h2>
+
+  @if (bookings.length > 0) {
+    <div class="booking-list">
+      @for (booking of bookings; track booking.id) {
+        <div class="booking-card">
+          <img [src]="booking.place.image_url" [alt]="booking.place.name" />
+          <h3>{{ booking.place.name }}</h3>
+          <p>Date: {{ booking.date }}</p>
+          <p>People: {{ booking.people_count }}</p>
+          <p>Status: {{ booking.status }}</p>
+          <p>Notes: {{ booking.notes }}</p>
+        </div>
+      }
+    </div>
+  } @else {
+    <p>No bookings yet.</p>
+  }
+</div>

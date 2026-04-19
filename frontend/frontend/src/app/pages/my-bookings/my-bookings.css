@@ -1,0 +1,20 @@
+.page {
+  padding: 20px;
+}
+
+.booking-list {
+  display: grid;
+  gap: 20px;
+}
+
+.booking-card {
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.booking-card img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+}

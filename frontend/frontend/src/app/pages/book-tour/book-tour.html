@@ -1,0 +1,44 @@
+<div class="page">
+  @if (place) {
+    <a [routerLink]="['/place', place.id]">← Back to place</a>
+
+    <h2>Book Tour</h2>
+
+    <img [src]="place.image_url" [alt]="place.name" class="place-image" />
+    <h3>{{ place.name }}</h3>
+    <p>📍 {{ place.address }}</p>
+    <p>⭐ {{ place.rating }} · {{ place.price_range }}</p>
+    <p>🕐 {{ place.working_hours }}</p>
+
+    <div class="form-block">
+      <label>Date</label>
+      <input [(ngModel)]="tourDate" type="date" [min]="today" />
+    </div>
+
+    <div class="form-block">
+      <label>Number of people</label>
+      <div class="counter">
+        <button (click)="numPeople = numPeople > 1 ? numPeople - 1 : 1">−</button>
+        <span>{{ numPeople }}</span>
+        <button (click)="numPeople = numPeople < 20 ? numPeople + 1 : 20">+</button>
+      </div>
+    </div>
+
+    <div class="form-block">
+      <label>Notes</label>
+      <textarea [(ngModel)]="notes" placeholder="Any special request?"></textarea>
+    </div>
+
+    @if (errorMessage) {
+      <div class="error-msg">{{ errorMessage }}</div>
+    }
+
+    @if (successMessage) {
+      <div class="success-msg">{{ successMessage }}</div>
+    }
+
+    <button (click)="submitBooking()" [disabled]="loading">
+      {{ loading ? 'Confirming...' : 'Confirm booking' }}
+    </button>
+  }
+</div>

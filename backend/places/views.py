@@ -8,35 +8,41 @@ from django.contrib.auth import authenticate
 from django.db.models import Q
 from .models import Place, Category, Booking, Favorite
 from .serializers import (
-    PlaceSerializer, CategorySerializer,
-    BookingSerializer, FavoriteSerializer,
-    RegisterSerializer, PlaceSearchSerializer,
+    PlaceSerializer,
+    CategorySerializer,
+    BookingSerializer,
+    FavoriteSerializer,
+    RegisterSerializer,
+    PlaceSearchSerializer,
 )
 
 
 # ══════════════════════════════════════════════════════
 #  FBV #1 — Register
 # ══════════════════════════════════════════════════════
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def register(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
-        return Response({
-            'message': 'User created successfully.',
-            'username': user.username,
-            'access': str(refresh.access_token),
-            'refresh': str(refresh),
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "message": "User created successfully.",
+                "username": user.username,
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            },
+            status=status.HTTP_201_CREATED,
+        )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # ══════════════════════════════════════════════════════
 #  FBV #2 — Search places
 # ══════════════════════════════════════════════════════
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def search_places(request):
     params_serializer = PlaceSearchSerializer(data=request.query_params)
@@ -46,14 +52,16 @@ def search_places(request):
     data = params_serializer.validated_data
     qs = Place.objects.all()  # uses PublishedPlaceManager
 
-    if data.get('query'):
-        qs = qs.filter(Q(name__icontains=data['query']) | Q(description__icontains=data['query']))
-    if data.get('category'):
-        qs = qs.filter(category__name=data['category'])
-    if data.get('min_rating') is not None:
-        qs = qs.filter(rating__gte=data['min_rating'])
+    if data.get("query"):
+        qs = qs.filter(
+            Q(name__icontains=data["query"]) | Q(description__icontains=data["query"])
+        )
+    if data.get("category"):
+        qs = qs.filter(category__name=data["category"])
+    if data.get("min_rating") is not None:
+        qs = qs.filter(rating__gte=data["min_rating"])
 
-    serializer = PlaceSerializer(qs, many=True, context={'request': request})
+    serializer = PlaceSerializer(qs, many=True, context={"request": request})
     return Response(serializer.data)
 
 
@@ -63,13 +71,13 @@ def search_places(request):
 class PlaceListCreateView(APIView):
     def get(self, request):
         places = Place.objects.all()
-        serializer = PlaceSerializer(places, many=True, context={'request': request})
+        serializer = PlaceSerializer(places, many=True, context={"request": request})
         return Response(serializer.data)
 
     def post(self, request):
         if not request.user.is_staff:
-            return Response({'detail': 'Admin only.'}, status=403)
-        serializer = PlaceSerializer(data=request.data, context={'request': request})
+            return Response({"detail": "Admin only."}, status=403)
+        serializer = PlaceSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -89,15 +97,17 @@ class PlaceDetailView(APIView):
     def get(self, request, pk):
         place = self.get_object(pk)
         if not place:
-            return Response({'detail': 'Not found.'}, status=404)
-        serializer = PlaceSerializer(place, context={'request': request})
+            return Response({"detail": "Not found."}, status=404)
+        serializer = PlaceSerializer(place, context={"request": request})
         return Response(serializer.data)
 
     def put(self, request, pk):
         place = self.get_object(pk)
         if not place:
-            return Response({'detail': 'Not found.'}, status=404)
-        serializer = PlaceSerializer(place, data=request.data, partial=True, context={'request': request})
+            return Response({"detail": "Not found."}, status=404)
+        serializer = PlaceSerializer(
+            place, data=request.data, partial=True, context={"request": request}
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -106,7 +116,7 @@ class PlaceDetailView(APIView):
     def delete(self, request, pk):
         place = self.get_object(pk)
         if not place:
-            return Response({'detail': 'Not found.'}, status=404)
+            return Response({"detail": "Not found."}, status=404)
         place.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -142,16 +152,16 @@ class BookingDetailView(APIView):
     def get(self, request, pk):
         booking = self.get_object(pk, request.user)
         if not booking:
-            return Response({'detail': 'Not found.'}, status=404)
+            return Response({"detail": "Not found."}, status=404)
         return Response(BookingSerializer(booking).data)
 
     def delete(self, request, pk):
         booking = self.get_object(pk, request.user)
         if not booking:
-            return Response({'detail': 'Not found.'}, status=404)
-        booking.status = 'cancelled'
+            return Response({"detail": "Not found."}, status=404)
+        booking.status = "cancelled"
         booking.save()
-        return Response({'detail': 'Booking cancelled.'})
+        return Response({"detail": "Booking cancelled."})
 
 
 # ══════════════════════════════════════════════════════
@@ -161,28 +171,30 @@ class FavoriteView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        favs = Favorite.objects.filter(user=request.user).select_related('place')
+        favs = Favorite.objects.filter(user=request.user).select_related("place")
         serializer = FavoriteSerializer(favs, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        place_id = request.data.get('place_id')
+        place_id = request.data.get("place_id")
         try:
             place = Place.all_objects.get(pk=place_id)
         except Place.DoesNotExist:
-            return Response({'detail': 'Place not found.'}, status=404)
+            return Response({"detail": "Place not found."}, status=404)
 
         fav, created = Favorite.objects.get_or_create(user=request.user, place=place)
         if not created:
             fav.delete()
-            return Response({'detail': 'Removed from favorites.', 'favorited': False})
-        return Response({'detail': 'Added to favorites.', 'favorited': True}, status=201)
+            return Response({"detail": "Removed from favorites.", "favorited": False})
+        return Response(
+            {"detail": "Added to favorites.", "favorited": True}, status=201
+        )
 
 
 # ══════════════════════════════════════════════════════
 #  Categories list
 # ══════════════════════════════════════════════════════
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def category_list(request):
     cats = Category.objects.all()
@@ -193,12 +205,12 @@ def category_list(request):
 # ══════════════════════════════════════════════════════
 #  Logout (blacklist refresh token)
 # ══════════════════════════════════════════════════════
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def logout(request):
     try:
-        token = RefreshToken(request.data.get('refresh'))
+        token = RefreshToken(request.data.get("refresh"))
         token.blacklist()
     except Exception:
         pass
-    return Response({'detail': 'Logged out.'})
+    return Response({"detail": "Logged out."})
