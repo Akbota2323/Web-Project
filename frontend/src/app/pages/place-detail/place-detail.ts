@@ -29,7 +29,7 @@ export class PlaceDetailComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loading = true;
 
-    this.placeService.getPlaceById(id).subscribe(data => {
+    this.placeService.getPlaceById(id).subscribe((data: Place | undefined) => {
       this.place = data;
       this.loading = false;
     });

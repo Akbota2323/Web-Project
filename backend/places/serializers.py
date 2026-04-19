@@ -1,14 +1,9 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework import serializers
 from .models import Category, Place, Booking, Favorite
 
 
-# ── 2 × serializers.Serializer ─────────────────────────────────────────────
-
-
 class RegisterSerializer(serializers.Serializer):
-    """Plain Serializer #1 — user registration"""
-
     username = serializers.CharField(max_length=150)
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=6)
@@ -28,19 +23,12 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class PlaceSearchSerializer(serializers.Serializer):
-    """Plain Serializer #2 — search / filter params"""
-
     query = serializers.CharField(required=False, allow_blank=True)
     category = serializers.CharField(required=False, allow_blank=True)
     min_rating = serializers.FloatField(required=False, min_value=0, max_value=5)
 
 
-# ── 2 × serializers.ModelSerializer ────────────────────────────────────────
-
-
 class CategorySerializer(serializers.ModelSerializer):
-    """ModelSerializer #1"""
-
     place_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -52,11 +40,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PlaceSerializer(serializers.ModelSerializer):
-    """ModelSerializer #2"""
-
     category = CategorySerializer(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), source="category", write_only=True
+        queryset=Category.objects.all(),
+        source="category",
+        write_only=True
     )
     is_favorited = serializers.SerializerMethodField()
 
@@ -90,6 +78,7 @@ class PlaceSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     place_name = serializers.CharField(source="place.name", read_only=True)
     username = serializers.CharField(source="user.username", read_only=True)
+    place_image = serializers.CharField(source="place.image_url", read_only=True)
 
     class Meta:
         model = Booking
@@ -97,6 +86,7 @@ class BookingSerializer(serializers.ModelSerializer):
             "id",
             "place",
             "place_name",
+            "place_image",
             "username",
             "tour_date",
             "num_people",

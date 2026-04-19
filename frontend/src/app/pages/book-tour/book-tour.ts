@@ -35,7 +35,7 @@ export class BookTourComponent implements OnInit {
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.placeService.getPlaceById(id).subscribe(place => {
+    this.placeService.getPlaceById(id).subscribe((place: Place | undefined) => {
       if (place) {
         this.place = place;
       }

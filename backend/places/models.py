@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .managers import PublishedPlaceManager
 
 
 class Category(models.Model):
@@ -10,6 +9,7 @@ class Category(models.Model):
         ("culture", "Culture & Museums"),
         ("entertainment", "Entertainment"),
     ]
+
     name = models.CharField(max_length=50, choices=CATEGORY_CHOICES, unique=True)
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=50, default="📍")
@@ -21,13 +21,18 @@ class Category(models.Model):
         return self.get_name_display()
 
 
+class ActivePlaceManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=True)
+
+
 class Place(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     address = models.CharField(max_length=300)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, related_name="places"
-    )  # FK #1
+    )
     latitude = models.FloatField(default=43.2220)
     longitude = models.FloatField(default=76.8512)
     image_url = models.URLField(blank=True)
@@ -37,9 +42,8 @@ class Place(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Custom manager
-    objects = PublishedPlaceManager()
-    all_objects = models.Manager()  # fallback to all
+    objects = ActivePlaceManager()
+    all_objects = models.Manager()
 
     class Meta:
         ordering = ["-rating"]
@@ -54,12 +58,9 @@ class Booking(models.Model):
         ("confirmed", "Confirmed"),
         ("cancelled", "Cancelled"),
     ]
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="bookings"
-    )  # FK #2
-    place = models.ForeignKey(
-        Place, on_delete=models.CASCADE, related_name="bookings"
-    )  # FK #3
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="bookings")
     tour_date = models.DateField()
     num_people = models.PositiveIntegerField(default=1)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
@@ -72,9 +73,7 @@ class Booking(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
-    place = models.ForeignKey(
-        Place, on_delete=models.CASCADE, related_name="favorited_by"
-    )
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="favorited_by")
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

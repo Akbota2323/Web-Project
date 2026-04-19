@@ -9,7 +9,7 @@ export interface Place {
   rating: number;
   price_range: string;
   working_hours: string;
-  phone?: string;
   is_favorited?: boolean;
   category?: Category;
+  phone?: string;
 }

@@ -1,42 +1,42 @@
 <div class="page">
   <nav class="navbar">
     <div class="nav-brand">
-      <span>🍎</span>
+      <span class="brand-icon">🍎</span>
       <span class="brand-name">AlmatyGo</span>
     </div>
+
     <div class="nav-links">
+      <a routerLink="/" class="nav-link">Home</a>
+      <a routerLink="/my-bookings" class="nav-link">My Bookings</a>
+
       @if (isLoggedIn) {
-        <a routerLink="/my-bookings" class="nav-link">My Bookings</a>
         <span class="nav-user">{{ username }}</span>
         <button class="btn-logout" (click)="logout()">Logout</button>
       } @else {
-        <a routerLink="/login" class="btn-nav-login">Sign In</a>
+        <a routerLink="/login" class="btn-login">Sign In</a>
       }
     </div>
   </nav>
 
-  <div class="hero">
-    <h1>Explore <span class="hero-highlight">Almaty</span></h1>
-    <p>Discover restaurants, mountains, culture and entertainment in Kazakhstan's cultural capital</p>
+  <section class="hero">
+    <div class="hero-overlay">
+      <h1>Explore <span>Almaty</span></h1>
+      <p>Discover the best places, mountains, culture and tours in Almaty</p>
 
-    <div class="search-bar">
-      <input
-        [(ngModel)]="searchQuery"
-        placeholder="Search places, attractions..."
-        (keyup.enter)="onSearch()"
-        class="search-input"
-      />
-      <button class="btn-search" (click)="onSearch()">Search</button>
+      <div class="search-bar">
+        <input
+          [(ngModel)]="searchQuery"
+          placeholder="Search places..."
+          (keyup.enter)="onSearch()"
+        />
+        <button (click)="onSearch()">Search</button>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <div class="container">
+  <section class="filters-section">
     <div class="category-filters">
-      <button
-        class="cat-btn"
-        [class.active]="selectedCategory === ''"
-        (click)="clearFilters()"
-      >
+      <button class="cat-btn" [class.active]="selectedCategory === ''" (click)="clearFilters()">
         All
       </button>
 
@@ -52,35 +52,68 @@
     </div>
 
     <div class="rating-filter">
-      <label>Min rating: <strong>{{ minRating === 0 ? 'Any' : minRating + '★' }}</strong></label>
+      <label>
+        Minimum rating:
+        <strong>{{ minRating === 0 ? 'Any' : minRating + '★' }}</strong>
+      </label>
       <input type="range" [(ngModel)]="minRating" min="0" max="5" step="0.5" (change)="onSearch()" />
     </div>
+  </section>
 
-    @if (errorMessage) {
-      <div class="error-msg">⚠️ {{ errorMessage }}</div>
-    }
+  @if (errorMessage) {
+    <div class="error-msg">⚠️ {{ errorMessage }}</div>
+  }
 
-    @if (loading) {
-      <div>Loading...</div>
-    }
+  @if (loading) {
+    <div class="loading">Loading places...</div>
+  }
 
-    @if (!loading) {
+  @if (!loading) {
+    <section class="results">
+      <div class="results-header">
+        <h2>Popular Places</h2>
+        <span>{{ places.length }} place{{ places.length !== 1 ? 's' : '' }}</span>
+      </div>
+
       <div class="places-grid">
         @for (place of places; track place.id) {
           <div class="place-card" (click)="goToDetail(place.id)">
-            <img [src]="place.image_url" [alt]="place.name" />
-            <h3>{{ place.name }}</h3>
-            <p>{{ place.address }}</p>
-            <p>{{ place.description }}</p>
-            <p>{{ getStars(place.rating) }} {{ place.rating }}</p>
-            <p>{{ place.price_range }}</p>
+            <div class="card-image">
+              <img [src]="place.image_url" [alt]="place.name" />
+              <button
+                class="fav-btn"
+                [class.active]="place.is_favorited"
+                (click)="toggleFavorite(place, $event)"
+              >
+                {{ place.is_favorited ? '❤️' : '🤍' }}
+              </button>
+            </div>
 
-            <button (click)="toggleFavorite(place, $event)">
-              {{ place.is_favorited ? '❤️ Saved' : '🤍 Save' }}
-            </button>
+            <div class="card-body">
+              <div class="card-top">
+                <span class="badge">
+                  {{ place.category ? getCategoryEmoji(place.category.name) : '📍' }}
+                </span>
+                <span class="price">{{ place.price_range }}</span>
+              </div>
+
+              <h3>{{ place.name }}</h3>
+              <p class="address">📍 {{ place.address }}</p>
+              <p class="desc">{{ place.description }}</p>
+
+              <div class="card-footer">
+                <span class="rating">{{ getStars(place.rating) }} {{ place.rating }}</span>
+                <button class="details-btn">View Details</button>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <p>🔍 No places found</p>
+            <button (click)="clearFilters()">Show all</button>
           </div>
         }
       </div>
-    }
-  </div>
+    </section>
+  }
 </div>

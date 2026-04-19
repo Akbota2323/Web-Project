@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Category } from '../../core/models/category';
-import { Place } from '../../core/models/place';
 import { PlaceService } from '../../services/place.service';
-import { AuthService } from '../../services/auth.service';
+import { Place } from '../../core/models/place';
+import { Category } from '../../core/models/category';
 
 @Component({
   selector: 'app-home',
@@ -27,20 +26,18 @@ export class HomeComponent implements OnInit {
   errorMessage = '';
 
   isLoggedIn = false;
-  username = '';
+  username = 'Guest';
 
   constructor(
     private placeService: PlaceService,
-    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isLoggedIn();
-    this.username = typeof window !== 'undefined' ? localStorage.getItem('username') || '' : '';
-
     this.loadCategories();
     this.loadPlaces();
+    this.isLoggedIn = !!localStorage.getItem('token');
+    this.username = localStorage.getItem('username') || 'Guest';
   }
 
   loadCategories(): void {
@@ -101,9 +98,10 @@ export class HomeComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
     this.isLoggedIn = false;
-    this.username = '';
+    this.username = 'Guest';
     this.router.navigate(['/login']);
   }
 
