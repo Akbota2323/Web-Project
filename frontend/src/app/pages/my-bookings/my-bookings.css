@@ -1,5 +1,21 @@
 .page {
-  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+.page-header p {
+  margin: 0;
+  color: #666;
 }
 
 .booking-list {
@@ -8,13 +24,111 @@
 }
 
 .booking-card {
-  border: 1px solid #ddd;
-  padding: 16px;
-  border-radius: 12px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.booking-card img {
+.booking-image img {
   width: 100%;
-  max-width: 300px;
-  border-radius: 8px;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.booking-content {
+  padding: 20px;
+}
+
+.booking-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.booking-top h3 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.booking-details p {
+  margin: 8px 0;
+  color: #333;
+}
+
+.booking-actions {
+  margin-top: 18px;
+}
+
+.btn-cancel {
+  border: none;
+  background: #111;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  opacity: 0.9;
+}
+
+.status-badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-confirmed {
+  background: #e9f9ee;
+  color: #1f8a4c;
+}
+
+.status-pending {
+  background: #fff4dd;
+  color: #b7791f;
+}
+
+.status-cancelled {
+  background: #fdecec;
+  color: #c53030;
+}
+
+.info-box,
+.error-box,
+.empty-state {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.error-box {
+  color: #c53030;
+}
+
+.empty-state h3 {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .booking-card {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-image img {
+    height: 220px;
+  }
+
+  .booking-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

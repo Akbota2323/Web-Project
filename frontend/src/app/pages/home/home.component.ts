@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { PlaceService } from '../../services/place.service';
-import { Place } from '../../core/models/place';
-import { Category } from '../../core/models/category';
+import { Place } from '../../services/place.service';
+import { Category } from '../../services/place.service';
 
 @Component({
   selector: 'app-home',
@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
     this.loadPlaces();
-    this.isLoggedIn = !!localStorage.getItem('token');
+    this.isLoggedIn = !!localStorage.getItem('access');
     this.username = localStorage.getItem('username') || 'Guest';
   }
 
@@ -88,18 +88,22 @@ export class HomeComponent implements OnInit {
     this.places = this.allPlaces;
   }
 
-  toggleFavorite(place: Place, event: Event): void {
-    event.stopPropagation();
-    this.placeService.toggleFavorite(place).subscribe();
-  }
+  toggleFavorite(place: Place, event: Event) {
+  event.stopPropagation();
+
+  this.placeService.toggleFavorite(place.id).subscribe(() => {
+    place.is_favorited = !place.is_favorited;
+  });
+}
 
   goToDetail(id: number): void {
     this.router.navigate(['/place', id]);
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
+    localStorage.removeItem('access');
+  localStorage.removeItem('refresh');
+  localStorage.removeItem('username');
     this.isLoggedIn = false;
     this.username = 'Guest';
     this.router.navigate(['/login']);

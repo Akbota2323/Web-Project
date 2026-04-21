@@ -1,20 +1,60 @@
 <div class="page">
-  <h2>My Bookings</h2>
+  <div class="page-header">
+    <h2>My Bookings</h2>
+    <p>Check your booked places and travel plans</p>
+  </div>
 
-  @if (bookings.length > 0) {
+  @if (loading) {
+    <div class="info-box">Loading bookings...</div>
+  }
+
+  @if (errorMessage) {
+    <div class="error-box">{{ errorMessage }}</div>
+  }
+
+  @if (!loading && bookings.length > 0) {
     <div class="booking-list">
       @for (booking of bookings; track booking.id) {
         <div class="booking-card">
-          <img [src]="booking.place.image_url" [alt]="booking.place.name" />
-          <h3>{{ booking.place.name }}</h3>
-          <p>Date: {{ booking.date }}</p>
-          <p>People: {{ booking.people_count }}</p>
-          <p>Status: {{ booking.status }}</p>
-          <p>Notes: {{ booking.notes }}</p>
+          <div class="booking-image">
+            <img
+              [src]="booking.place_image || 'https://via.placeholder.com/400x250'"
+              [alt]="booking.place_name"
+            />
+          </div>
+
+          <div class="booking-content">
+            <div class="booking-top">
+              <h3>{{ booking.place_name }}</h3>
+              <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+                {{ booking.status }}
+              </span>
+            </div>
+
+            <div class="booking-details">
+              <p><strong>Date:</strong> {{ booking.tour_date }}</p>
+              <p><strong>People:</strong> {{ booking.num_people }}</p>
+
+              @if (booking.notes) {
+                <p><strong>Notes:</strong> {{ booking.notes }}</p>
+              }
+            </div>
+
+            <div class="booking-actions">
+              @if (booking.status !== 'cancelled') {
+                <button class="btn-cancel" (click)="cancelBooking(booking.id)">
+                  Cancel booking
+                </button>
+              }
+            </div>
+          </div>
         </div>
       }
     </div>
-  } @else {
-    <p>No bookings yet.</p>
+  } @else if (!loading && bookings.length === 0) {
+    <div class="empty-state">
+      <h3>No bookings yet</h3>
+      <p>You have not booked any places yet.</p>
+    </div>
   }
 </div>

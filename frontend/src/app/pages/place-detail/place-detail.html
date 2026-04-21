@@ -1,33 +1,57 @@
-<div class="page">
-  @if (loading) {
-    <p>Loading...</p>
-  }
+<div class="detail-page">
+  @if (place) {
+    <div class="detail-card">
+      <div class="detail-image-wrap">
+        <img class="detail-image" [src]="place.image_url" [alt]="place.name" />
+      </div>
 
-  @if (place && !loading) {
-    <img [src]="place.image_url" [alt]="place.name" class="detail-image" />
-    <h1>{{ place.name }}</h1>
-    <p>{{ place.address }}</p>
-    <p>{{ place.description }}</p>
+      <div class="detail-content">
+        <div class="detail-top">
+          <div>
+            <h1>{{ place.name }}</h1>
+            <p class="detail-address">📍 {{ place.address }}</p>
+          </div>
 
-    @if (place.category) {
-      <p>{{ getCategoryEmoji(place.category.name) }} {{ place.category.name }}</p>
-    }
+          @if (place.category) {
+            <span class="category-badge">
+              {{ getCategoryEmoji(place.category.name) }} {{ place.category.name }}
+            </span>
+          }
+        </div>
 
-    <p>{{ getStars(place.rating) }} {{ place.rating }}</p>
-    <p>{{ place.price_range }}</p>
-    <p>{{ place.working_hours }}</p>
+        <p class="detail-description">
+          {{ place.description }}
+        </p>
 
-    @if (place.phone) {
-      <p>{{ place.phone }}</p>
-    }
+        <div class="detail-meta">
+          <div class="meta-item">
+            <span class="meta-label">Rating</span>
+            <span class="meta-value">⭐ {{ place.rating }}</span>
+          </div>
 
-    <button (click)="bookTour()">Book a tour</button>
-    <button (click)="toggleFavorite()">
-      {{ place.is_favorited ? '❤️ Saved' : '🤍 Save place' }}
-    </button>
+          <div class="meta-item">
+            <span class="meta-label">Price</span>
+            <span class="meta-value">{{ place.price_range }}</span>
+          </div>
 
-    @if (!isLoggedIn) {
-      <p>Please login to use all features.</p>
-    }
+          <div class="meta-item">
+            <span class="meta-label">Hours</span>
+            <span class="meta-value">{{ place.working_hours || 'Not specified' }}</span>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          <button class="btn-primary" (click)="goToBooking()">
+            Book a tour
+          </button>
+
+          <button class="btn-secondary" (click)="toggleFavorite()">
+            {{ place.is_favorited ? '💜 Saved' : '🤍 Save place' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="loading-box">Loading place...</div>
   }
 </div>

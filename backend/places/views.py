@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -27,7 +26,7 @@ def register_view(request):
         refresh = RefreshToken.for_user(user)
         return Response(
             {
-                "message": "User created successfully.",
+                "message": "User created successfully",
                 "username": user.username,
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
@@ -41,32 +40,32 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        try:
-            refresh_token = request.data.get("refresh")
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response({"message": "Logged out successfully"}, status=status.HTTP_205_RESET_CONTENT)
-        except Exception:
-            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": "Logged out successfully"},
+            status=status.HTTP_200_OK
+        )
 
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def search_places(request):
     params_serializer = PlaceSearchSerializer(data=request.query_params)
+
     if not params_serializer.is_valid():
         return Response(params_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     data = params_serializer.validated_data
-    qs = Place.objects.all()
+    qs = Place.objects.filter(is_active=True)
 
     if data.get("query"):
         qs = qs.filter(
-            Q(name__icontains=data["query"]) | Q(description__icontains=data["query"])
+            Q(name__icontains=data["query"]) |
+            Q(description__icontains=data["query"]) |
+            Q(address__icontains=data["query"])
         )
 
     if data.get("category"):
-        qs = qs.filter(category__name=data["category"])
+        qs = qs.filter(category__name__iexact=data["category"])
 
     if data.get("min_rating") is not None:
         qs = qs.filter(rating__gte=data["min_rating"])
@@ -87,18 +86,19 @@ class PlaceListCreateView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        places = Place.objects.all()
+        places = Place.objects.filter(is_active=True)
         serializer = PlaceSerializer(places, many=True, context={"request": request})
         return Response(serializer.data)
 
     def post(self, request):
-        if not request.user.is_authenticated or not request.user.is_staff:
-            return Response({"detail": "Admin only."}, status=status.HTTP_403_FORBIDDEN)
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
 
         serializer = PlaceSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -107,7 +107,7 @@ class PlaceDetailView(APIView):
 
     def get_object(self, pk):
         try:
-            return Place.all_objects.get(pk=pk)
+            return Place.objects.get(pk=pk)
         except Place.DoesNotExist:
             return None
 
@@ -128,6 +128,7 @@ class PlaceDetailView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
@@ -136,7 +137,7 @@ class PlaceDetailView(APIView):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
         place.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class BookingListCreateView(APIView):
@@ -152,6 +153,7 @@ class BookingListCreateView(APIView):
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -168,7 +170,9 @@ class BookingDetailView(APIView):
         booking = self.get_object(pk, request.user)
         if not booking:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        return Response(BookingSerializer(booking).data)
+
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data)
 
     def delete(self, request, pk):
         booking = self.get_object(pk, request.user)
@@ -177,7 +181,7 @@ class BookingDetailView(APIView):
 
         booking.status = "cancelled"
         booking.save()
-        return Response({"detail": "Booking cancelled."})
+        return Response({"detail": "Booking cancelled."}, status=status.HTTP_200_OK)
 
 
 class FavoriteView(APIView):
@@ -191,8 +195,11 @@ class FavoriteView(APIView):
     def post(self, request):
         place_id = request.data.get("place_id")
 
+        if not place_id:
+            return Response({"detail": "place_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            place = Place.all_objects.get(pk=place_id)
+            place = Place.objects.get(pk=place_id)
         except Place.DoesNotExist:
             return Response({"detail": "Place not found."}, status=status.HTTP_404_NOT_FOUND)
 

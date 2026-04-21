@@ -1,78 +1,72 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Place } from '../../core/models/place';
-import { PlaceService } from '../../services/place.service';
+import { ActivatedRoute } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
+import { PlaceService, Place } from '../../services/place.service';
 
 @Component({
   selector: 'app-book-tour',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './book-tour.html',
   styleUrl: './book-tour.css'
 })
 export class BookTourComponent implements OnInit {
-  place?: Place;
+  place!: Place;
 
   tourDate = '';
-  today = new Date().toISOString().split('T')[0];
   numPeople = 1;
   notes = '';
 
   loading = false;
-  errorMessage = '';
   successMessage = '';
+  errorMessage = '';
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
-    private placeService: PlaceService,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private placeService: PlaceService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.placeService.getPlaceById(id).subscribe((p: Place | undefined) => {
-      this.place = p;
+    this.placeService.getPlaceById(id).subscribe({
+      next: (data) => {
+        this.place = data;
+      },
+      error: () => {
+        this.errorMessage = 'Could not load place';
+      }
     });
   }
 
-  submitBooking(): void {
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    if (!this.place) {
-      this.errorMessage = 'Place not found';
-      return;
-    }
-
+  bookTour(): void {
     if (!this.tourDate) {
-      this.errorMessage = 'Please select a tour date';
+      this.errorMessage = 'Please select a date';
       return;
     }
 
     this.loading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
 
     this.bookingService.createBooking(
-      this.place,
+      this.place.id,
       this.tourDate,
       this.numPeople,
       this.notes
     ).subscribe({
       next: () => {
+        this.successMessage = 'Booking successful 🎉';
         this.loading = false;
-        this.successMessage = 'Booking successful!';
-
-        setTimeout(() => {
-          this.router.navigate(['/my-bookings']);
-        }, 800);
+        this.notes = '';
+        this.numPeople = 1;
       },
       error: () => {
-        this.loading = false;
         this.errorMessage = 'Booking failed';
+        this.loading = false;
       }
     });
   }

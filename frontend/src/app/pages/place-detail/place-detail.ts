@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Place } from '../../core/models/place';
+import { Place } from '../../services/place.service';
 import { PlaceService } from '../../services/place.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -29,7 +29,7 @@ export class PlaceDetailComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loading = true;
 
-    this.placeService.getPlaceById(id).subscribe((data: Place | undefined) => {
+    this.placeService.getPlaceById(id).subscribe((data: Place ) => {
       this.place = data;
       this.loading = false;
     });
@@ -56,9 +56,15 @@ export class PlaceDetailComponent implements OnInit {
     }
   }
 
+  goToBooking(): void {
+  if (this.place) {
+    this.router.navigate(['/book-tour', this.place.id]);
+  }
+}
+
   toggleFavorite(): void {
     if (this.place) {
-      this.placeService.toggleFavorite(this.place).subscribe();
+      this.placeService.toggleFavorite(this.place.id).subscribe();
     }
   }
 }

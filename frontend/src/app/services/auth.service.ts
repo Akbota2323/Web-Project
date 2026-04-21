@@ -1,21 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 interface AuthResponse {
   access: string;
   refresh: string;
-  username?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  private API = 'http://127.0.0.1:8000/api'; // если другой порт — поменяй
-
+  private API = 'http://127.0.0.1:8000/api';
   isLoggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(
@@ -37,15 +34,33 @@ export class AuthService {
     return localStorage.getItem('access');
   }
 
-  login(username: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API}/login/`, { username, password }).pipe(
-      tap(res => {
+  register(username: string, email: string, password: string): Observable<any> {
+    return this.http.post(`${this.API}/register/`, {
+      username,
+      email,
+      password
+    }).pipe(
+      tap((res: any) => {
         if (this.isBrowser()) {
           localStorage.setItem('access', res.access);
           localStorage.setItem('refresh', res.refresh);
-          if (res.username) {
-            localStorage.setItem('username', res.username);
-          }
+          localStorage.setItem('username', res.username || username);
+        }
+        this.isLoggedIn$.next(true);
+      })
+    );
+  }
+
+  login(username: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API}/login/`, {
+      username,
+      password
+    }).pipe(
+      tap((res) => {
+        if (this.isBrowser()) {
+          localStorage.setItem('access', res.access);
+          localStorage.setItem('refresh', res.refresh);
+          localStorage.setItem('username', username);
         }
         this.isLoggedIn$.next(true);
       })
@@ -53,9 +68,14 @@ export class AuthService {
   }
 
   logout(): void {
-    const refresh = this.isBrowser() ? localStorage.getItem('refresh') : null;
+    const token = this.getToken();
 
-    this.http.post(`${this.API}/logout/`, { refresh }).subscribe();
+    this.http.post(`${this.API}/logout/`, {}, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    }).subscribe({
+      next: () => {},
+      error: () => {}
+    });
 
     if (this.isBrowser()) {
       localStorage.removeItem('access');

@@ -15,8 +15,6 @@ export class LoginComponent {
   username = '';
   email = '';
   password = '';
-  password2 = '';
-
   isRegister = false;
   loading = false;
   errorMessage = '';
@@ -28,31 +26,31 @@ export class LoginComponent {
 
   submit(): void {
     this.errorMessage = '';
-
-    if (!this.username || !this.password) {
-      this.errorMessage = 'Fill all fields';
-      return;
-    }
-
     this.loading = true;
 
-    this.auth.login(this.username, this.password).subscribe({
-      next: (user) => {
-        this.loading = false;
-
-        if (user) {
+    if (this.isRegister) {
+      this.auth.register(this.username, this.email, this.password).subscribe({
+        next: () => {
+          this.loading = false;
           this.router.navigate(['/']);
-        } else {
-          this.errorMessage = this.isRegister
-            ? 'Registration failed'
-            : 'Invalid username or password';
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorMessage = err?.error ? JSON.stringify(err.error) : 'Register failed';
         }
-      },
-      error: () => {
-        this.loading = false;
-        this.errorMessage = 'Something went wrong';
-      }
-    });
+      });
+    } else {
+      this.auth.login(this.username, this.password).subscribe({
+        next: () => {
+          this.loading = false;
+          this.router.navigate(['/']);
+        },
+        error: () => {
+          this.loading = false;
+          this.errorMessage = 'Invalid username or password';
+        }
+      });
+    }
   }
 
   toggle(): void {

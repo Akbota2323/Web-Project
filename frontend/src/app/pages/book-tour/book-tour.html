@@ -1,44 +1,65 @@
-<div class="page">
+<div class="book-page">
   @if (place) {
-    <a [routerLink]="['/place', place.id]">← Back to place</a>
+    <div class="book-layout">
+      <div class="place-card">
+        <img class="place-image" [src]="place.image_url" [alt]="place.name" />
 
-    <h2>Book Tour</h2>
+        <div class="place-info">
+          <span class="mini-badge">
+            {{ place.category ? place.category.name : 'Place' }}
+          </span>
 
-    <img [src]="place.image_url" [alt]="place.name" class="place-image" />
-    <h3>{{ place.name }}</h3>
-    <p>📍 {{ place.address }}</p>
-    <p>⭐ {{ place.rating }} · {{ place.price_range }}</p>
-    <p>🕐 {{ place.working_hours }}</p>
+          <h2>{{ place.name }}</h2>
+          <p class="place-address">📍 {{ place.address }}</p>
 
-    <div class="form-block">
-      <label>Date</label>
-      <input [(ngModel)]="tourDate" type="date" [min]="today" />
-    </div>
+          <div class="mini-meta">
+            <span>⭐ {{ place.rating }}</span>
+            <span>{{ place.price_range }}</span>
+            <span>🕒 {{ place.working_hours || 'Not specified' }}</span>
+          </div>
 
-    <div class="form-block">
-      <label>Number of people</label>
-      <div class="counter">
-        <button (click)="numPeople = numPeople > 1 ? numPeople - 1 : 1">−</button>
-        <span>{{ numPeople }}</span>
-        <button (click)="numPeople = numPeople < 20 ? numPeople + 1 : 20">+</button>
+          <p class="place-description">
+            {{ place.description }}
+          </p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h3>Book Your Visit</h3>
+        <p class="form-subtitle">Choose a date and tell us a few details.</p>
+
+        @if (errorMessage) {
+          <div class="alert error">{{ errorMessage }}</div>
+        }
+
+        @if (successMessage) {
+          <div class="alert success">{{ successMessage }}</div>
+        }
+
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" [(ngModel)]="tourDate" />
+        </div>
+
+        <div class="form-group">
+          <label>Number of people</label>
+          <input type="number" [(ngModel)]="numPeople" min="1" />
+        </div>
+
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea
+            [(ngModel)]="notes"
+            placeholder="Any special request?"
+          ></textarea>
+        </div>
+
+        <button class="confirm-btn" (click)="bookTour()" [disabled]="loading">
+          {{ loading ? 'Booking...' : 'Confirm booking' }}
+        </button>
       </div>
     </div>
-
-    <div class="form-block">
-      <label>Notes</label>
-      <textarea [(ngModel)]="notes" placeholder="Any special request?"></textarea>
-    </div>
-
-    @if (errorMessage) {
-      <div class="error-msg">{{ errorMessage }}</div>
-    }
-
-    @if (successMessage) {
-      <div class="success-msg">{{ successMessage }}</div>
-    }
-
-    <button (click)="submitBooking()" [disabled]="loading">
-      {{ loading ? 'Confirming...' : 'Confirm booking' }}
-    </button>
+  } @else {
+    <div class="loading-box">Loading booking page...</div>
   }
 </div>

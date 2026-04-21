@@ -1,1 +1,128 @@
-<p>home works!</p>
+<div class="page">
+  <nav class="navbar">
+    <div class="nav-brand" routerLink="/">
+      <span class="brand-logo">🍎</span>
+      <span class="brand-name">AlmatyGo</span>
+    </div>
+
+    <div class="nav-links">
+      <a routerLink="/" class="nav-link">Home</a>
+      <a routerLink="/my-bookings" class="nav-link">My Bookings</a>
+
+      @if (isLoggedIn) {
+        <span class="nav-user">{{ username }}</span>
+        <button class="btn-nav" (click)="logout()">Logout</button>
+      } @else {
+        <a routerLink="/login" class="btn-nav">Sign In</a>
+      }
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-overlay">
+      <h1>Discover Almaty</h1>
+      <p>Mountains, culture, food and unforgettable places</p>
+
+      <div class="search-bar">
+        <input
+          [(ngModel)]="searchQuery"
+          placeholder="Search places..."
+          class="search-input"
+        />
+        <button class="search-btn" (click)="onSearch()">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="filters-section">
+    <div class="category-filters">
+      <button
+        class="cat-btn"
+        [class.active]="selectedCategory === ''"
+        (click)="clearFilters()"
+      >
+        All
+      </button>
+
+      @for (cat of categories; track cat.id) {
+        <button
+          class="cat-btn"
+          [class.active]="selectedCategory === cat.name"
+          (click)="filterByCategory(cat.name)"
+        >
+          {{ getCategoryEmoji(cat.name) }} {{ cat.name }}
+        </button>
+      }
+    </div>
+
+    <div class="rating-filter">
+      <label>Minimum rating: <strong>{{ minRating === 0 ? 'Any' : minRating }}</strong></label>
+      <input
+        type="range"
+        [(ngModel)]="minRating"
+        min="0"
+        max="5"
+        step="0.5"
+        (change)="onSearch()"
+      />
+    </div>
+  </section>
+
+  @if (errorMessage) {
+    <div class="error-box">⚠️ {{ errorMessage }}</div>
+  }
+
+  <section class="places-section">
+    <div class="section-top">
+      <h2>Popular Places</h2>
+      <span>{{ places.length }} places</span>
+    </div>
+
+    @if (places.length > 0) {
+      <div class="places-grid">
+        @for (place of places; track place.id) {
+          <div class="place-card" (click)="goToDetail(place.id)">
+            <div class="place-image-wrap">
+              <img
+                class="place-image"
+                [src]="place.image_url || 'https://via.placeholder.com/400x260'"
+                [alt]="place.name"
+              />
+              <button
+                class="fav-btn"
+                (click)="toggleFavorite(place, $event)"
+              >
+                {{ place.is_favorited ? '💜' : '🤍' }}
+              </button>
+            </div>
+
+            <div class="place-body">
+              <div class="place-top">
+                <h3>{{ place.name }}</h3>
+                <span class="place-rating">⭐ {{ place.rating }}</span>
+              </div>
+
+              <p class="place-address">📍 {{ place.address }}</p>
+              <p class="place-description">
+                {{ place.description.length > 90 ? (place.description | slice:0:90) + '...' : place.description }}
+              </p>
+
+              <div class="place-footer">
+                <span class="category-chip">
+                  {{ place.category ? getCategoryEmoji(place.category.name) + ' ' + place.category.name : '📍 place' }}
+                </span>
+                <span class="price-chip">{{ place.price_range }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <h3>No places found</h3>
+        <p>Try changing your search or filters.</p>
+        <button class="btn-nav" (click)="clearFilters()">Show all</button>
+      </div>
+    }
+  </section>
+</div>

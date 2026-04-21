@@ -1,86 +1,45 @@
-.auth-page {
+.login-page {
   min-height: 100vh;
   display: flex;
-}
-
-.auth-left {
-  flex: 1;
-  background: #1B4332;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 60px;
-  color: white;
-}
-
-.brand .logo {
-  font-size: 48px;
-  display: block;
-  margin-bottom: 12px;
-}
-
-.brand h1 {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.brand p {
-  font-size: 16px;
-  opacity: 0.8;
-  line-height: 1.6;
-  max-width: 320px;
-}
-
-.features {
-  margin-top: 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.feature {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 15px;
-  opacity: 0.9;
-}
-
-.feature span:first-child {
-  font-size: 20px;
-}
-
-.auth-right {
-  width: 480px;
-  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
-  background: #f8f9fa;
+  padding: 24px;
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.45)),
+    url('https://images.unsplash.com/photo-1501785888041-af3ef285b470') center/cover no-repeat;
 }
 
-.auth-card {
+.login-card {
   width: 100%;
-  max-width: 380px;
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
-  border: 1px solid #e9ecef;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  max-width: 460px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border-radius: 28px;
+  padding: 34px 30px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
 }
 
-.auth-card h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin-bottom: 4px;
+.login-header {
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-.subtitle {
-  color: #6c757d;
-  font-size: 14px;
-  margin-bottom: 28px;
+.logo {
+  font-size: 38px;
+  margin-bottom: 8px;
+}
+
+.login-header h2 {
+  margin: 0 0 10px;
+  font-size: 32px;
+  color: #0f172a;
+}
+
+.login-header p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+  font-size: 15px;
 }
 
 .form-group {
@@ -89,55 +48,82 @@
 
 .form-group label {
   display: block;
-  font-size: 13px;
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  color: #0f172a;
+  font-weight: 600;
 }
 
 .form-group input {
   width: 100%;
-  padding: 10px 14px;
-  border: 1.5px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 14px;
-  font-family: 'Outfit', sans-serif;
-  transition: border-color 0.2s;
+  padding: 14px 16px;
+  border: 1px solid #dbe3ec;
+  border-radius: 16px;
+  font-size: 15px;
   outline: none;
+  box-sizing: border-box;
+  background: #fcfdff;
+  transition: 0.2s ease;
 }
 
 .form-group input:focus {
-  border-color: #2D6A4F;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.15);
 }
 
-.btn-submit {
+.login-btn {
   width: 100%;
-  padding: 12px;
-  background: #2D6A4F;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
   margin-top: 8px;
-  transition: background 0.2s;
-  font-family: 'Outfit', sans-serif;
-}
-
-.btn-submit:hover { background: #40916C; }
-.btn-submit:disabled { background: #adb5bd; cursor: not-allowed; }
-
-.toggle {
-  text-align: center;
-  font-size: 13px;
-  color: #6c757d;
-  margin-top: 20px;
-}
-
-.toggle a {
-  color: #2D6A4F;
-  font-weight: 600;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  margin-left: 4px;
+  transition: 0.2s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
+}
+
+.login-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.switch-mode {
+  margin-top: 18px;
+  text-align: center;
+}
+
+.switch-mode p {
+  margin: 0;
+  color: #475569;
+}
+
+.switch-mode span {
+  color: #2563eb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.switch-mode span:hover {
+  text-decoration: underline;
+}
+
+.alert {
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.alert.error {
+  background: #fef2f2;
+  color: #b91c1c;
 }
